@@ -2,3 +2,4 @@ tensorflow
 streamlit
 pillow
 firebase-admin
+matplotlib
