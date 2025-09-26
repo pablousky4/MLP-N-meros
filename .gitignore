@@ -1,0 +1,12 @@
+# Ignorar credenciales de Firebase
+firebase_key.json
+
+# Archivos temporales de Python
+__pycache__/
+*.pyc
+
+# Archivos de notebooks
+.ipynb_checkpoints/
+
+# Archivos de sistema
+.DS_Store
