@@ -45,3 +45,4 @@ if uploaded_file is not None:
     # Mostrar resultados
     st.image(image_resized, caption=f"Predicción: {predicted_label}", width=150)
     st.success(f"✅ La IA predice que es un **{predicted_label}**")
+    
