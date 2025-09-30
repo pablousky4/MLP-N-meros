@@ -1,14 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[6]:
-
-
-get_ipython().run_line_magic('pip', 'install -q streamlit tensorflow pillow firebase-admin numpy')
-
-
-# In[7]:
-
 
 import streamlit as st
 import tensorflow as tf
@@ -55,10 +44,3 @@ if uploaded_file is not None:
     predicted_digit = np.argmax(pred)
 
     st.subheader(f"✅ Predicción: **{predicted_digit}**")
-
-
-# In[8]:
-
-
-get_ipython().system('streamlit run app.ipynb --server.headless true --server.port 8501')
-
