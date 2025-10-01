@@ -12,7 +12,7 @@ import os
 # -----------------------------
 # Cargar variables de entorno
 # -----------------------------
-MONGO_URI = st.secrets("MONGO_URI")
+MONGO_URI = st.secrets["MONGO_URI"]
 
 # -----------------------------
 # Conectar con MongoDB Atlas
