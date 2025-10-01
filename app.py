@@ -8,13 +8,11 @@ import datetime
 import base64
 from pymongo import MongoClient
 import os
-from dotenv import load_dotenv
 
 # -----------------------------
 # Cargar variables de entorno
 # -----------------------------
-load_dotenv()
-MONGO_URI = os.getenv("MONGO_URI")
+MONGO_URI = st.secrets("MONGO_URI")
 
 # -----------------------------
 # Conectar con MongoDB Atlas
