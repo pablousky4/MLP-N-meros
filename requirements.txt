@@ -3,3 +3,5 @@ streamlit
 pillow
 firebase-admin
 matplotlib
+pymongo
+python-dotenv

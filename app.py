@@ -7,6 +7,8 @@ import io
 import datetime
 import base64
 from pymongo import MongoClient
+import os
+from dotenv import load_dotenv
 
 # -----------------------------
 # Cargar variables de entorno
