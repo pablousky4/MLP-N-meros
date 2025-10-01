@@ -3,6 +3,23 @@ import streamlit as st
 import tensorflow as tf
 import numpy as np
 from PIL import Image
+import io
+import datetime
+import base64
+from pymongo import MongoClient
+
+# -----------------------------
+# Cargar variables de entorno
+# -----------------------------
+load_dotenv()
+MONGO_URI = os.getenv("MONGO_URI")
+
+# -----------------------------
+# Conectar con MongoDB Atlas
+# -----------------------------
+client = MongoClient(MONGO_URI)
+db = client["mlpdb"]
+collection = db["predicciones"]
 
 # -----------------------------
 # Cargar modelo entrenado
@@ -45,4 +62,27 @@ if uploaded_file is not None:
     # Mostrar resultados
     st.image(image_resized, caption=f"Predicción: {predicted_label}", width=150)
     st.success(f"✅ La IA predice que es un **{predicted_label}**")
-    
+
+    buffered = io.BytesIO()
+    image_resized.save(buffered, format="PNG")
+    img_base64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
+
+    doc = {
+        "fecha": datetime.datetime.now(),
+        "prediccion": int(predicted_label),
+        "imagen": img_base64
+    }
+    collection.insert_one(doc)
+
+# -----------------------------
+# Mostrar historial
+# -----------------------------
+st.subheader("📊 Historial de predicciones")
+
+docs = collection.find().sort("fecha", -1).limit(10)
+
+for doc in docs:
+    img_data = base64.b64decode(doc["imagen"])
+    img = Image.open(io.BytesIO(img_data))
+    st.image(img, width=60)
+    st.write(f"🕒 {doc['fecha']} → Predicción: **{doc['prediccion']}**")
