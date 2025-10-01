@@ -6,20 +6,24 @@ from PIL import Image
 import io
 import datetime
 import base64
-from pymongo import MongoClient
-import os
+import sqlite3
 
 # -----------------------------
-# Cargar variables de entorno
+# Cargar BBDD
 # -----------------------------
-MONGO_URI = st.secrets["MONGO_URI"]
+conn = sqlite3.connect("predicciones.db", check_same_thread=False)
+c = conn.cursor()
 
-# -----------------------------
-# Conectar con MongoDB Atlas
-# -----------------------------
-client = MongoClient(MONGO_URI)
-db = client["mlpdb"]
-collection = db["predicciones"]
+# Crear tabla si no existe
+c.execute("""
+CREATE TABLE IF NOT EXISTS predicciones (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    fecha TEXT,
+    prediccion INTEGER,
+    imagen TEXT
+)
+""")
+conn.commit()
 
 # -----------------------------
 # Cargar modelo entrenado
@@ -67,22 +71,21 @@ if uploaded_file is not None:
     image_resized.save(buffered, format="PNG")
     img_base64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
 
-    doc = {
-        "fecha": datetime.datetime.now(),
-        "prediccion": int(predicted_label),
-        "imagen": img_base64
-    }
-    collection.insert_one(doc)
+    fecha_actual = datetime.datetime.now().isoformat()
+    c.execute("INSERT INTO predicciones (fecha, prediccion, imagen) VALUES (?, ?, ?)",
+              (fecha_actual, int(predicted_label), img_base64))
+    conn.commit()
 
 # -----------------------------
 # Mostrar historial
 # -----------------------------
 st.subheader("📊 Historial de predicciones")
 
-docs = collection.find().sort("fecha", -1).limit(10)
+c.execute("SELECT fecha, prediccion, imagen FROM predicciones ORDER BY fecha DESC LIMIT 10")
+rows = c.fetchall()
 
-for doc in docs:
-    img_data = base64.b64decode(doc["imagen"])
-    img = Image.open(io.BytesIO(img_data))
+for row in rows:
+    fecha, prediccion, img_data = row
+    img = Image.open(io.BytesIO(base64.b64decode(img_data)))
     st.image(img, width=60)
-    st.write(f"🕒 {doc['fecha']} → Predicción: **{doc['prediccion']}**")
+    st.write(f"🕒 {fecha} → Predicción: **{prediccion}**")
