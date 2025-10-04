@@ -30,7 +30,7 @@ conn.commit()
 # -----------------------------
 # Asegúrate de haber guardado tu modelo con:
 # model.save("mlp_mnist.h5")
-model = tf.keras.models.load_model("model.h5")
+model = tf.keras.models.load_model("/models/model.h5")
 
 st.title("🔢 Clasificador de Números MNIST")
 st.write("Sube una imagen de un número escrito a mano (0-9) y la IA intentará reconocerlo.")
